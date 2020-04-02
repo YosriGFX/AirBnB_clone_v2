@@ -1,70 +1,40 @@
 #!/usr/bin/python3
-"""test for city"""
+""" Test City Module """
 import unittest
-import os
 from models.city import City
-from models.base_model import BaseModel
-import pep8
+import datetime
 
 
-class TestCity(unittest.TestCase):
-    """this will test the city class"""
+class TestState(unittest.TestCase):
+    """ Unit Tests for City Class """
+    def setUp(self):
+        """ Setup instances of the City Class """
+        self.a_inst = City()
+        self.b_inst = City()
+        self.b_inst.save()
 
-    @classmethod
-    def setUpClass(cls):
-        """set up for test"""
-        cls.city = City()
-        cls.city.name = "LA"
-        cls.city.state_id = "CA"
+    def test_setup(self):
+        """ Tests for creating instances """
+        self.assertTrue(self.a_inst.id != self.b_inst.id)
+        self.assertTrue(hasattr(self.a_inst, "updated_at"))
+        self.assertTrue(hasattr(self.b_inst, "updated_at"))
+        self.assertTrue(hasattr(self.a_inst, "name"))
+        self.assertTrue(hasattr(self.b_inst, "name"))
+        self.assertTrue(hasattr(self.a_inst, "state_id"))
+        self.assertTrue(hasattr(self.b_inst, "state_id"))
+        self.assertTrue(self.a_inst.created_at != self.b_inst.created_at)
 
-    @classmethod
-    def teardown(cls):
-        """at the end of the test this will tear it down"""
-        del cls.city
+    def test_types(self):
+        """ Testing for types """
+        self.assertTrue(type(self.a_inst.created_at) is datetime.datetime)
+        self.assertTrue(type(self.a_inst.name) is str)
 
-    def tearDown(self):
-        """teardown"""
-        try:
-            os.remove("file.json")
-        except Exception:
-            pass
+    def test_save(self):
+        """ Testing updating  """
+        b_date = self.b_inst.updated_at
+        self.b_inst.save()
+        b_date2 = self.b_inst.updated_at
+        self.assertTrue(b_date != b_date2)
 
-    def test_pep8_City(self):
-        """Tests pep8 style"""
-        style = pep8.StyleGuide(quiet=True)
-        p = style.check_files(['models/city.py'])
-        self.assertEqual(p.total_errors, 0, "fix pep8")
-
-    def test_checking_for_docstring_City(self):
-        """checking for docstrings"""
-        self.assertIsNotNone(City.__doc__)
-
-    def test_attributes_City(self):
-        """chekcing if City have attributes"""
-        self.assertTrue('id' in self.city.__dict__)
-        self.assertTrue('created_at' in self.city.__dict__)
-        self.assertTrue('updated_at' in self.city.__dict__)
-        self.assertTrue('state_id' in self.city.__dict__)
-        self.assertTrue('name' in self.city.__dict__)
-
-    def test_is_subclass_City(self):
-        """test if City is subclass of Basemodel"""
-        self.assertTrue(issubclass(self.city.__class__, BaseModel), True)
-
-    def test_attribute_types_City(self):
-        """test attribute type for City"""
-        self.assertEqual(type(self.city.name), str)
-        self.assertEqual(type(self.city.state_id), str)
-
-    def test_save_City(self):
-        """test if the save works"""
-        self.city.save()
-        self.assertNotEqual(self.city.created_at, self.city.updated_at)
-
-    def test_to_dict_City(self):
-        """test if dictionary works"""
-        self.assertEqual('to_dict' in dir(self.city), True)
-
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()
